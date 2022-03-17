@@ -18,5 +18,6 @@
 
 #include "mod.h"
 #include "util.h"
+#include "sadx-util.h"
 
 #endif //PCH_H

@@ -11,6 +11,8 @@ extern "C" {
 		modpath = path;
 
 		ReadConfig(path, helperFunctions);
+
+		init_Chaos0();
 	}
 
 

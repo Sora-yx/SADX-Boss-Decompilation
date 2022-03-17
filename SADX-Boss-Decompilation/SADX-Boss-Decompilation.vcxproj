@@ -162,12 +162,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Chaos-common.h" />
+    <ClInclude Include="Chaos0.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="sadx-util.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Chaos0.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mod.cpp" />
