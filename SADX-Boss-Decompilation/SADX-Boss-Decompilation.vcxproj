@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Chaos-common.h" />
     <ClInclude Include="Chaos0.h" />
+    <ClInclude Include="Chaos2.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
@@ -175,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="chaos-common.cpp" />
     <ClCompile Include="Chaos0.cpp" />
+    <ClCompile Include="Chaos2.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mod.cpp" />

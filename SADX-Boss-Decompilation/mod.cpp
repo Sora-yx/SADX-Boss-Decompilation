@@ -13,6 +13,7 @@ extern "C" {
 		ReadConfig(path, helperFunctions);
 
 		init_Chaos0();
+		init_Chaos2();
 	}
 
 
