@@ -2,10 +2,9 @@
 #include "Chaos-common.h"
 #include "Chaos0.h"
 
-void evChaosInit()
+task* setChaos0()
 {
-    chaos_event_flag = 1;
-    chaos_event_exit_flag = 0;
+    return CreateElementalTask(3u, 2, BossChaos0);
 }
 
 void RdChaos0Init(task* tp)
@@ -16,6 +15,10 @@ void RdChaos0Init(task* tp)
     int v4; 
 
     data = tp->twp;
+
+    EvChaosInit();
+    setChaos0();
+    LoadEffectTexture();
 
 }
 
