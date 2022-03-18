@@ -7,6 +7,103 @@ task* setChaos0()
     return CreateElementalTask(3u, 2, BossChaos0);
 }
 
+void RainEffect(task* tp)
+{
+   
+    double posCheck;
+    double scalePos;
+    double sclY;
+    double rng2;
+    int rngCamRotY;
+    double cosRes; 
+    double sinRes;
+    double camPosZ; 
+    int rng; 
+    double posZ;
+    double posX; 
+    int v15;
+    double shadowPos;
+    double sclValue; 
+
+    taskwk* data = tp->twp;
+    unsigned int  mode = (unsigned __int8)data->mode;
+
+    if (data->mode)
+    {
+        if (mode != 1)
+        {
+            if (mode >= 3)
+                return;
+
+            posCheck = (float)(data->counter.f - (float)0.033333335);
+            data->counter.f = data->counter.f - (float)0.033333335;
+            if (posCheck >= 0.0)
+            {
+               // DisplayDrop(tp);
+                return;
+            }
+            DestroyTask(tp);
+            return;
+        }
+        scalePos = (float)(data->scl.x + data->pos.y);
+        sclY = data->scl.y;
+        data->pos.y = data->scl.x + data->pos.y;
+
+        if (scalePos >= sclY)
+        {
+           // DisplayRain(tp);
+        }
+        else
+        {
+            if ((float)(chaostwp->pos.y - playertwp[0]->pos.y) > 60.0)
+            {
+                DestroyTask(tp);
+                return;
+            }
+            data->pos.y = sclY;
+            data->counter.f = 1.0;
+          //  tp->disp = DisplayDrop;
+            data->mode = 2;
+        }
+    }
+    else
+    {
+        rng2 = (double)rand() * 0.000030517578 * 150.0;
+        rngCamRotY = (unsigned __int64)((-30.0 - (double)rand() * 0.000030517578 * 120.0) * 65536.0 * 0.002777777777777778)
+            - Camera_Data1->Rotation.y;
+        cosRes = (float)((float)njCos(rngCamRotY) * (float)rng2);
+        sinRes = njSin(rngCamRotY);
+        data->pos.x = camera_twp->pos.x + (float)cosRes;
+        camPosZ = (float)(camera_twp->pos.z + (float)((float)sinRes * (float)rng2));
+        data->pos.y = 120.0;
+        data->pos.z = camPosZ;
+        rng = rand();
+        posZ = data->pos.z;
+        posX = data->pos.x;
+        data->scl.x = -rng * (float)0.000030517578 * rain_param.spd_ofs + rain_param.spd_base;
+        shadowPos = GetShadowPos(posX, 5.0, posZ, &data->ang) + 0.1;
+        sclValue = 0.1;
+        data->scl.y = (float)shadowPos + (float)0.1;
+        if ((float)((float)shadowPos + (float)0.1) > 0.1)
+            sclValue = (float)((float)shadowPos + (float)0.1);
+        data->scl.y = sclValue;
+
+        //tp->disp = DisplayRain;
+        data->mode = 1;
+    }
+}
+
+void ctrlRainEffect(task* tp)
+{
+    for (int i = 0; i < rain_param.num; ++i)
+        CreateElementalTask(2, 3, RainEffect);
+}
+
+void __cdecl setRainEffect()
+{
+    tp_raineff = CreateElementalTask(2u, 2, ctrlRainEffect);
+}
+
 void RdChaos0Init(task* tp)
 {
     taskwk* data; 
@@ -19,6 +116,8 @@ void RdChaos0Init(task* tp)
     EvChaosInit();
     setChaos0();
     LoadEffectTexture();
+    setRainEffect();
+
 
 }
 

@@ -13,3 +13,17 @@ DataPointer(NJS_TEXANIM, anim_c0_attack_c, 0x38D90E0);
 DataPointer(NJS_TEXANIM, anim_c0_drop, 0x038D90F4);
 DataPointer(NJS_TEXANIM, anim_c0_ato, 0x38D9108);
 
+DataPointer(task*, tp_raineff, 0x3C63C0C);
+
+struct RAINEFF
+{
+	int num;
+	float len_base;
+	float len_ofs;
+	float spd_base;
+	float spd_ofs;
+	float ang_base[3];
+	float ang_ofs[3];
+};
+
+DataPointer(RAINEFF, rain_param, 0x0112026C);

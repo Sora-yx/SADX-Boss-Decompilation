@@ -17,7 +17,6 @@ void LoadEffectTexture()
     eff_c_lp_posadd = 0.2;
 }
 
-
 void EvChaosInit()
 {
     chaos_event_flag = 1;
