@@ -2,13 +2,10 @@
 #include "Chaos-common.h"
 #include "Chaos0.h"
 
-
 task* setChaos0()
 {
     return CreateElementalTask(3u, 2, BossChaos0);
 }
-
-
 
 void DisplayRain(task* tp)
 {
@@ -42,8 +39,7 @@ void DisplayDrop(task* tp)
 }
 
 void RainEffect(task* tp)
-{
-   
+{  
     double posCheck;
     double scalePos;
     double sclY;
@@ -138,10 +134,8 @@ void __cdecl setRainEffect()
     tp_raineff = CreateElementalTask(2u, 2, ctrlRainEffect);
 }
 
-
 void RdChaos0Init(task* tp)
 {
- 
     taskwk* data = tp->twp;
 
     EvChaosInit();
@@ -151,6 +145,13 @@ void RdChaos0Init(task* tp)
     LoadChaos0_SkyBox(); //unsolved
     data->mode = 1;
     dsPlay_iloop(1026, -1, 8, 0);
+
+    if (!GetCountKilledPlayer())
+    {
+        c0_message_flag[0] = 0;
+        dword_3C63C04 = 0;
+        dword_3C63C08 = 0;
+    }
 }
 
 void Rd_Chaos0(task* tp)

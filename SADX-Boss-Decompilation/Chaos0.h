@@ -35,3 +35,6 @@ DataPointer(___stcClip, pClipMap_Chaos00, 0x111F768);
 
 
 VoidFunc(LoadChaos0_SkyBox, 0x545CE0);
+DataArray(int, c0_message_flag, 0x3C63C00, 3);
+DataPointer(int, dword_3C63C04, 0x3C63C04);
+DataPointer(int, dword_3C63C08, 0x3C63C08);
