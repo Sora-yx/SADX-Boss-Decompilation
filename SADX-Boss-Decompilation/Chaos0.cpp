@@ -2,9 +2,43 @@
 #include "Chaos-common.h"
 #include "Chaos0.h"
 
+
 task* setChaos0()
 {
     return CreateElementalTask(3u, 2, BossChaos0);
+}
+
+
+
+void DisplayRain(task* tp)
+{
+    taskwk* data = tp->twp;
+    njPushMatrix(0);
+    njTranslateV(0, &data->pos);
+    njDrawLine3D(&rain_p3col, 1, 0);
+    njPopMatrix(1);
+    ResetMaterial();
+}
+
+void DisplayDrop(task* tp)
+{
+    taskwk* data = tp->twp;
+    double scale = (float)(data->counter.f * (float)0.25);
+
+    argb_10.a = data->counter.f;
+    ___njSetConstantMaterial(&argb_10);
+    njSetTexture(&texlist_chaos_effect);
+    njColorBlendingMode(0, 8);
+    njColorBlendingMode(1, 6);
+    njPushMatrix(0);
+    njTranslateV(0, &data->pos);
+    njRotateX(0, 0x4000);
+    njScale(0, scale, scale, scale);
+    njDrawSprite3D(&sprite_c0_ato, 0, 0x22u);
+    njPopMatrix(1);
+    ResetMaterial();
+    njColorBlendingMode(0, 8);
+    njColorBlendingMode(1, 6);
 }
 
 void RainEffect(task* tp)
@@ -39,7 +73,7 @@ void RainEffect(task* tp)
             data->counter.f = data->counter.f - (float)0.033333335;
             if (posCheck >= 0.0)
             {
-               // DisplayDrop(tp);
+                DisplayDrop(tp);
                 return;
             }
             DestroyTask(tp);
@@ -51,7 +85,7 @@ void RainEffect(task* tp)
 
         if (scalePos >= sclY)
         {
-           // DisplayRain(tp);
+            DisplayRain(tp);
         }
         else
         {
@@ -62,7 +96,7 @@ void RainEffect(task* tp)
             }
             data->pos.y = sclY;
             data->counter.f = 1.0;
-          //  tp->disp = DisplayDrop;
+            tp->disp = DisplayDrop;
             data->mode = 2;
         }
     }
@@ -88,7 +122,7 @@ void RainEffect(task* tp)
             sclValue = (float)((float)shadowPos + (float)0.1);
         data->scl.y = sclValue;
 
-        //tp->disp = DisplayRain;
+        tp->disp = DisplayRain;
         data->mode = 1;
     }
 }
@@ -104,21 +138,19 @@ void __cdecl setRainEffect()
     tp_raineff = CreateElementalTask(2u, 2, ctrlRainEffect);
 }
 
+
 void RdChaos0Init(task* tp)
 {
-    taskwk* data; 
-    int v2; 
-    int v3; 
-    int v4; 
-
-    data = tp->twp;
+ 
+    taskwk* data = tp->twp;
 
     EvChaosInit();
     setChaos0();
     LoadEffectTexture();
     setRainEffect();
-
-
+    LoadChaos0_SkyBox(); //unsolved
+    data->mode = 1;
+    dsPlay_iloop(1026, -1, 8, 0);
 }
 
 void Rd_Chaos0(task* tp)

@@ -27,3 +27,11 @@ struct RAINEFF
 };
 
 DataPointer(RAINEFF, rain_param, 0x0112026C);
+DataPointer(NJS_ARGB, argb_10, 0x01120310);
+DataPointer(NJS_POINT3COL, rain_p3col, 0x01120300);
+
+DataArray(___stcClip, pClipSky_Chaos00, 0x111F764, 1);
+DataPointer(___stcClip, pClipMap_Chaos00, 0x111F768);
+
+
+VoidFunc(LoadChaos0_SkyBox, 0x545CE0);
