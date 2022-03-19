@@ -43,14 +43,14 @@ void Rd_Chaos2(task* tp)
 
     data = tp->twp;
     SetCameraControlEnabled(0);
-    if (data->mode && data->mode == 2)
+    if (!data->mode)
+    {
+        RdChaos2Init(tp);
+    }
+    else if (data->mode == 2)
     {
         ADX_Close();
         ___njFogDisable();
-    }
-    else
-    {
-        RdChaos2Init(tp);
     }
 }
 
