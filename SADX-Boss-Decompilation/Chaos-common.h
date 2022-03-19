@@ -8,6 +8,8 @@ DataPointer(float, eff_scale_b, 0x3D0D738);
 DataPointer(float, flt_3D0D710, 0x3D0D710);
 DataPointer(float, eff_c_lp_posadd, 0x03D0D58C);
 
+DataPointer(chaoswk*, chaosbwp, 0x3C5A7D8);
 
 void LoadEffectTexture();
 void EvChaosInit();
+

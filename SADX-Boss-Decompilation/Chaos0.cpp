@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Chaos-common.h"
 #include "Chaos0.h"
+#include "UsercallFunctionHandler.h"
+
+auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
 
 task* setChaos0()
 {
@@ -141,7 +144,8 @@ void RdChaos0Init(task* tp)
     EvChaosInit();
     setChaos0();
     LoadEffectTexture();
-    setRainEffect();
+    //setRainEffect();
+    Chaos0_Rain_Load();
     LoadChaos0_SkyBox(); //unsolved
     data->mode = 1;
     dsPlay_iloop(1026, -1, 8, 0);
