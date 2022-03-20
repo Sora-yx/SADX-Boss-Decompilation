@@ -2,6 +2,7 @@
 #include "Chaos-common.h"
 #include "Chaos2.h"
 
+DataPointer(D3DMATRIX, stru_3C63EC0, 0x3C63EC0);
 
 void BossChaos2(task* tp)
 {
@@ -120,9 +121,10 @@ void BossChaos2(task* tp)
         {
             CreateBubble();
         }
-        GetMMMatrix(0x45u, ra0_matrix);
+       // GetMMMatrix(0x45u, ra0_matrix);
+        GetMMMatrix(0x45, &stru_3C63EC0._11);
         ChaosSurfacePatternChange(chaos_worker);
-        Chaos2Display(tp);
+        tp->disp(tp);
         setChaosColliParam(chaos_entity);
         v5 = chaos_worker2->dispflag;
         if ((v5 & 0x41) != 0)
