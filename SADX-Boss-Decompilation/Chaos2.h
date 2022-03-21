@@ -1,8 +1,6 @@
 #pragma once
 #include "UsercallFunctionHandler.h"
 
-//TaskFunc(BossChaos2, 0x54DB90);
-
 auto ControlModeChaos2 = GenerateUsercallWrapper<void (*)(chaoswk* cwp, taskwk* twp)>(noret, 0x54CB00, rEAX, rEDI);
 auto ExecModeChaos2 = GenerateUsercallWrapper<void (*)(task* chaos_object)>(noret, 0x54D510, rEAX);
 auto StartBattle_0 = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x54CCE0, rEAX);
@@ -26,7 +24,7 @@ DataPointer(BUBBLE_DATA, chaos2_bubble, 0x118EE58);
 //DataPointer(CCL_INFO*, chaos2_colli_info, 0x11215B0);
 DataPointer(task*, hintmes_tp, 0x3C63F0C);
 
-DataPointer(NJS_MATRIX_PTR, ra0_matrix, 0x3C63EC0);
+DataPointer(D3DMATRIX, ra0_matrix, 0x3C63EC0);
 
 DataPointer(char, byte_3D0DBC2, 0x3D0DBC2);
 
@@ -37,9 +35,5 @@ DataArray(CHAOS_OBJPVTBL, objpos_objnum_tbl_0, 0x11218A8, 14);
 DataArray(CCL_INFO, chaos2_colli_info, 0x11215B0, 14);
 
 
-VoidFunc(LoadChaos2_SkyBox, 0x54A540);
+//VoidFunc(LoadChaos2_SkyBox, 0x54A540);
 
-/*enum Chaos2Actions
-{
-
-};*/
