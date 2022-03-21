@@ -2,19 +2,8 @@
 #include "Chaos-common.h"
 #include "Chaos2.h"
 
-DataPointer(D3DMATRIX, stru_3C63EC0, 0x3C63EC0);
-
 void BossChaos2(task* tp)
 {
-    __int16 v5; // ax
-    float v6; // ecx
-    double v7; // st7
-    double v8; // st6
-    double v9; // st5
-    double v10; // st7
-    float v11; // [esp+0h] [ebp-14h]
-    float v12; // [esp+0h] [ebp-14h]
-
     chaoswk* chaos_worker = (chaoswk*)tp->awp;
     chaoswk* chaos_worker2 = chaos_worker;
     taskwk* chaos_entity = tp->twp;
@@ -27,10 +16,7 @@ void BossChaos2(task* tp)
     {
         hintmes_tp = 0; // Good
         chaos_worker = (chaoswk*) BInitialize(chaos_entity, 192); // Good
-        if (!chaos_worker)
-        {
-            return;
-        }
+        if (!chaos_worker) return;
 
         CCL_Init(tp, chaos2_colli_info, 14, 3u); // Pushes from right to left (chaos2_colli_info becomes 0x011215B0) Probably good
         SET_COLLI_RANGE(tp->twp->cwp, 300.0); // cwp is +0x38 from twp here
@@ -44,7 +30,7 @@ void BossChaos2(task* tp)
         tp->awp = (anywk*)chaos_worker;
 
         chaostwp = chaos_entity;
-        chaosbwp = chaos_worker; // Previously referenced the same address as chaostwp (oops)
+        chaosbwp = chaos_worker;
         chaos_worker2 = chaos_worker;
 
         tp->disp = Chaos2Display;
@@ -93,85 +79,84 @@ void BossChaos2(task* tp)
         ControlModeChaos2(chaos_worker, chaos_entity);
     }
 
-    if (tp->exec != DestroyTask)
+    if (tp->exec == DestroyTask) return;
+
+    byte_3D0DBC2 = chaos_entity->mode == 0xC;
+    byte_3D0DBC3 = byte_3D0DBC2;
+    byte_3D0DBC4 = byte_3D0DBC2;
+    byte_3D0DBC5 = byte_3D0DBC2;
+
+    if (chaos_entity->mode != chaos_reqmode)
     {
-        byte_3D0DBC2 = chaos_entity->mode == 0xC;
-        byte_3D0DBC3 = byte_3D0DBC2;
-        byte_3D0DBC4 = byte_3D0DBC2;
-        byte_3D0DBC5 = byte_3D0DBC2;
+        if (chaos_entity->smode != -1)
+        {
+            chaos_entity->smode = -1;
+            ExecModeChaos2(tp);
+        }
+        chaos_oldmode = chaos_entity->mode;
+        chaos_entity->mode = chaos_reqmode;
+        chaos_entity->smode = 0;
+    }
+    if ((bossmtn_flag & 2) == 0)
+    {
+        BSetMotion(chaos_entity, &chaos_worker->bwk);
+    }
+    BJoinVertexes(chaos_entity, &chaos_worker->bwk);
+    CalcChaosObjectPos(chaos_entity, objpos_objnum_tbl_0, chaosparam->leg_len);
+    if ((chaos_worker2->dispflag & 1) != 0)
+    {
+        CreateBubble();
+    }
 
-        if (chaos_entity->mode != chaos_reqmode)
-        {
-            if (chaos_entity->smode != -1)
-            {
-                chaos_entity->smode = -1;
-                ExecModeChaos2(tp);
-            }
-            chaos_oldmode = chaos_entity->mode;
-            chaos_entity->mode = chaos_reqmode;
-            chaos_entity->smode = 0;
-        }
-        if ((bossmtn_flag & 2) == 0)
-        {
-            BSetMotion(chaos_entity, &chaos_worker->bwk);
-        }
-        BJoinVertexes(chaos_entity, &chaos_worker->bwk);
-        CalcChaosObjectPos(chaos_entity, objpos_objnum_tbl_0, chaosparam->leg_len);
-        if ((chaos_worker2->dispflag & 1) != 0)
-        {
-            CreateBubble();
-        }
-       // GetMMMatrix(0x45u, ra0_matrix);
-        GetMMMatrix(0x45, &stru_3C63EC0._11);
-        ChaosSurfacePatternChange(chaos_worker);
-        tp->disp(tp);
-        setChaosColliParam(chaos_entity);
-        v5 = chaos_worker2->dispflag;
-        if ((v5 & 0x41) != 0)
-        {
-            DisplayChaosBallShadow(&chaos_entity->pos, 7.0);
-            chaos_worker2->ground_y = 2.0;
-        }
-        else if ((v5 & 0x10) != 0)
-        {
-            v11 = chaos_worker2->sp_scale.x * 19.590952;
-            DisplayChaosBallShadow(&chaos_entity->pos, v11);
-        }
-        v6 = chaos_worker2->HitPoint;
-        ++chaos_worker2->generaltimer;
-        boss_life_f = v6;
-        EntryColliList(chaos_entity);
+    GetMMMatrix(0x45, &ra0_matrix._11);
+    ChaosSurfacePatternChange(chaos_worker);
+    tp->disp(tp);
+    setChaosColliParam(chaos_entity);
 
-        v7 = chaos_entity->pos.z - EntityData1Ptrs[0]->Position.z;
-        v8 = chaos_entity->pos.y - EntityData1Ptrs[0]->Position.y;
-        v9 = chaos_entity->pos.x - EntityData1Ptrs[0]->Position.x;
-        v12 = v9 * v9 + v8 * v8 + v7 * v7;
-        v10 = squareroot(v12);
-        if (v10 < 60.0)
-        {
-            dsPlay_timer_v(
-                1020,
-                (int)chaos_entity,
-                1,
-                0,
-                10,
-                chaos_entity->pos.x,
-                chaos_entity->pos.y,
-                chaos_entity->pos.z);
-        }
+    short display_flag = chaos_worker2->dispflag;
+    if ((display_flag & 0x41) != 0)
+    {
+        DisplayChaosBallShadow(&chaos_entity->pos, 7.0);
+        chaos_worker2->ground_y = 2.0;
+    }
+    else if ((display_flag & 0x10) != 0)
+    {
+        float shadow_size = chaos_worker2->sp_scale.x * 19.590952;
+        DisplayChaosBallShadow(&chaos_entity->pos, shadow_size);
+    }
 
-        LoopTaskC(tp);
-        if (!EV_CheckCancel())
-        {
-            if (playertwp[0]->pos.y <= 0.0)
-            {
-                playertwp[0]->pos.y = 0.0;
-            }
-            else
-            {
-                playertwp[0]->pos.y = playertwp[0]->pos.y;
-            }
-        }
+    ++chaos_worker2->generaltimer;
+    boss_life_f = chaos_worker2->HitPoint;
+    EntryColliList(chaos_entity);
+
+    double v7 = chaos_entity->pos.z - EntityData1Ptrs[0]->Position.z;
+    double v8 = chaos_entity->pos.y - EntityData1Ptrs[0]->Position.y;
+    double v9 = chaos_entity->pos.x - EntityData1Ptrs[0]->Position.x;
+    float v12 = v9 * v9 + v8 * v8 + v7 * v7;
+
+    if (squareroot(v12) < 60.0)
+    {
+        dsPlay_timer_v(
+            1020,
+            (int)chaos_entity,
+            1,
+            0,
+            10,
+            chaos_entity->pos.x,
+            chaos_entity->pos.y,
+            chaos_entity->pos.z);
+    }
+
+    LoopTaskC(tp);
+    if (EV_CheckCancel()) return;
+
+    if (playertwp[0]->pos.y <= 0.0)
+    {
+        playertwp[0]->pos.y = 0.0;
+    }
+    else
+    {
+        playertwp[0]->pos.y = playertwp[0]->pos.y;
     }
 }
 
@@ -181,15 +166,14 @@ task* setChaos2()
     return CreateElementalTask(3u, 2, BossChaos2);
 }
 
-void LoadChaos2_SkyBOX() // Test and check if it's correct
+void LoadChaos2_SkyBox() // Test and check if it's correct
 {
     gFog = pFogTable_Chaos02[ssActNumber][ClipLevel];    // LevelFogData
     gClipSky = pClipSky_Chaos02[ssActNumber][ClipLevel]; // SkyboxDrawDistance
     gClipMap = pClipMap_Chaos02[ssActNumber][ClipLevel]; // LevelDrawDistance
     gClipSky.f32Far = gClipSky.f32Far - (float)1000.0;
-
-    gSkyScale.x = gClipMap.f32Near;
-    gSkyScale.z = gClipMap.f32Far;
+    
+    gSkyScale = SkyBoxScale_Chaos2[ssActNumber][ClipLevel];
 }
 
 void RdChaos2Init(task* tp)
