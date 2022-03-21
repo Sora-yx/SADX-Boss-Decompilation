@@ -33,3 +33,6 @@ struct MORPHWK
 	Rotation3 puru_ang0;
 	Rotation3 puru_angadd0;
 };
+
+FunctionPointer(void, effectWaterMove, (taskwk* a1, chaoswk* a2, NJS_OBJECT* a3), 0x7AEDA0);
+FunctionPointer(float, Shadow, (taskwk* a1, float a2), 0x49EE30);

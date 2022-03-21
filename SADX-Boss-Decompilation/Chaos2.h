@@ -29,9 +29,6 @@ DataPointer(task*, hintmes_tp, 0x3C63F0C);
 DataPointer(NJS_MATRIX_PTR, ra0_matrix, 0x3C63EC0);
 
 DataPointer(char, byte_3D0DBC2, 0x3D0DBC2);
-DataPointer(char, byte_3D0DBC3, 0x3D0DBC3);
-DataPointer(char, byte_3D0DBC4, 0x3D0DBC4);
-DataPointer(char, byte_3D0DBC5, 0x3D0DBC5);
 
 DataArray(PL_JOIN_VERTEX, chaos2_jv_list, 0x1120830, 22);
 DataArray(PL_ACTION, chaos2_action, 0x117C778, 13);

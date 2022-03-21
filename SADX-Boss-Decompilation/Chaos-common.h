@@ -87,3 +87,12 @@ FunctionPointer(void, setChaosBubble, (taskwk* twp, chaoswk* cwp, BUBBLE_DATA* t
 FunctionPointer(void, CalcChaosObjectPos, (taskwk* twp, CHAOS_OBJPVTBL* table, float yoffset), 0x7AF060);
 
 DataPointer(CHAOS_PARAM*, chaosparam, 0x3C5A7E8);
+FunctionPointer(void, SetCameraChaosStdParam, (NJS_POINT3* a1, NJS_POINT3* a2), 0x469240);
+
+DataPointer(char, byte_3D0DBC3, 0x3D0DBC3);
+DataPointer(char, byte_3D0DBC4, 0x3D0DBC4);
+DataPointer(char, byte_3D0DBC5, 0x3D0DBC5);
+
+DataPointer(float, walk_dist, 0x3C5A7F4);
+
+TaskFunc(dispEffectChaosTracks, 0x7AD050);
