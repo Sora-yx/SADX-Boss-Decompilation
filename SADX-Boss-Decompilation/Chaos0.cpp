@@ -41,7 +41,7 @@ void BossChaos0_(task* tp)
 
     if (data->mode)
     {
-        execModeChaos0(tp);
+        execModeChaos0(tp); //control chaos 0 actions
     }
     else
     {
@@ -55,16 +55,16 @@ void BossChaos0_(task* tp)
         SET_COLLI_RANGE(tp->twp->cwp, 300.0);
         chaosworker->bwk.req_action = 0;
         chaosworker->bwk.action = 0;
-        chaosworker->bwk.plactptr = chaos0_action; //not sure
+        chaosworker->bwk.plactptr = chaos0_action; //not sure if the size is correct
         chaosworker->bwk.pljvptr = chaos0_jv_list; // //
         data->mode = 1;
         tp->awp = (anywk*)chaosworker;
         chaosbwp = chaosworker;
         chaoswk2 = chaosworker;
         chaostwp = data;
-        sub_546340(); //good also call clear flag
+        sub_546340(); //assign some part of chaos model to some variables, also call clear flag
 
-        BOSSCHAOS0_OBJECTS[33]->evalflags &= 0xFFFFFFFD;
+        BOSSCHAOS0_OBJECTS[33]->evalflags &= 0xFFFFFFFD; 
         chaos_reqmode = data->mode;
         chaosworker->argb_ofs[0].a = 0.0;
         chaosworker->argb_ofs[0].r = 0.0;
@@ -72,7 +72,7 @@ void BossChaos0_(task* tp)
         chaosworker->argb_ofs[0].b = 0.0;
         ShakeChaos0_Task =  CreateElementalTask(3u, 2, ShakeChaos0Head);
         tp->dest = (TaskFuncPtr)Chaos0_Delete;
-        sub_547350();
+        sub_547350(); //set some scalue value to Chaos model and clear some flags
         setChaosBubble(data, chaosworker, &chaos0_bubble);
         chaosworker->sp_mode = 0;
         effectWaterMove(data, chaosworker, &Chaos_Puddle_Model);
@@ -85,7 +85,7 @@ void BossChaos0_(task* tp)
         morph_tp = morph_water_set(BOSSCHAOS0_OBJECTS[33]);
         SetChaosShakeBrain(BOSSCHAOS0_OBJECTS[39]);
 
-
+        //apply the "visible flag" to every part of the geometry that has collision
         if ((*LANDTABLEBOSSCHAOS0)->COLCount - 1 >= 0)
         {
             colFlags = &(*LANDTABLEBOSSCHAOS0)->Col->Flags;
@@ -113,7 +113,7 @@ void BossChaos0_(task* tp)
         }
 
         chaos_event_flag = 1;
-        SetChaosCoreDisplay(tp, 1.0, &c00_corepos_ofs, (void*)0x1120454);
+        SetChaosCoreDisplay(tp, 1.0, &c00_corepos_ofs, (void*)0x1120454); //display the red effect on Chaos head
         core_disp_flag = 1;
     }
 
@@ -142,7 +142,7 @@ void BossChaos0_(task* tp)
     }
     else
     {
-        ctrlActionChaos0(data, (motionwk2*)chaosMWP, chaosworker);
+        ctrlActionChaos0(data, (motionwk2*)chaosMWP, chaosworker); //decide chaos's next move based on his HP
     }
 
     if (tp->exec != DestroyTask)
@@ -152,6 +152,7 @@ void BossChaos0_(task* tp)
         if (mode == MD_CHAOS_PUNCH || (v19 = mode == MD_CHAOS_ROLLATTACK, v20 = MD_CHAOS_INIT, v19))
             v20 = MD_CHAOS_STND;
 
+        //those variable seem to be unused but just in case...
         byte_3D0DBC3 = v20;
         byte_3D0DBC4 = v20;
         byte_3D0DBC5 = v20;
@@ -174,6 +175,7 @@ void BossChaos0_(task* tp)
             data->smode = 0;
         }
 
+        //manage camera between regular and the one when Chaos jump on the pole
         if (camera_change_flag)
         {
             if (!chaos_event_flag)
