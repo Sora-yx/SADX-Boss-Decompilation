@@ -96,3 +96,7 @@ DataPointer(char, byte_3D0DBC5, 0x3D0DBC5);
 DataPointer(float, walk_dist, 0x3C5A7F4);
 
 TaskFunc(dispEffectChaosTracks, 0x7AD050);
+void InitialChaosPos(taskwk* twp);
+
+FunctionPointer(void, SetParamCameraChaosStageInit, (taskwk* a1, float a2, float a3, signed int a4), 0x4647C0);
+void __cdecl Chaos_gdcontrol(task* tp);

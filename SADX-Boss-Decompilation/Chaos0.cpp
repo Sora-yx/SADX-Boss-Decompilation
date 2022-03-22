@@ -4,7 +4,38 @@
 #include "UsercallFunctionHandler.h"
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
-auto StartBattle_Chaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x548290, rEAX);
+//auto StartBattle_Chaos0_ = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x548290, rEAX);
+
+TaskFunc(Chaos_gdcontrol_, 0x54A5F0);
+
+void StartBattle_Chaos0(task* tp)
+{
+    taskwk* data = tp->twp;
+    chaoswk* chaosWorker = (chaoswk*)tp->awp;
+
+    InitialChaosPos(data);
+    SetDisplayBossName("Chaos 0", -1, 240, 60);
+    SetCameraChaosStdParam(0, 0);
+    SetParamCameraChaosStageInit(data, 10.0, 20.0, 240);
+    CameraSetEventCamera(52, 0);
+    camera_change_flag = 0;
+    SleepTimer();
+    PadReadOffP(0);
+    climit_tp = SetCircleLimit_(&playertwp[0]->pos, &limpos, 90.0); 
+    SetViewAngle(12743);
+
+    ADX_Close();
+    task* gdControlTask = CreateElementalTask(LoadObj_Data1, 0, Chaos_gdcontrol); //manage music start 
+    gdControlTask->twp->mode = 20;
+    gdControlTask->twp->wtimer = 60;
+
+    chaos_event_flag = 0;
+    core_disp_flag = 1;
+    
+    unsigned __int16 chaosEtcFlag = chaosWorker->etcflag;
+    chaosWorker->dispflag = 1;
+    chaosWorker->etcflag = chaosEtcFlag & 0xFFFB;
+}
 
 void BossChaos0_(task* tp)
 {

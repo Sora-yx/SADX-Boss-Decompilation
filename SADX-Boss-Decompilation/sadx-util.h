@@ -36,3 +36,6 @@ struct MORPHWK
 
 FunctionPointer(void, effectWaterMove, (taskwk* a1, chaoswk* a2, NJS_OBJECT* a3), 0x7AEDA0);
 FunctionPointer(float, Shadow, (taskwk* a1, float a2), 0x49EE30);
+
+FunctionPointer(task*, SetCircleLimit_, (NJS_POINT3* pos, NJS_POINT3* center, float radius), 0x7AF3E0); // Creates an object that limits a position into a circle
+FunctionPointer(void, RoundBGM_Play, (int a1), 0x00425800);
