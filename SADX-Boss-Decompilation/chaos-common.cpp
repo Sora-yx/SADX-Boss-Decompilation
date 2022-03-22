@@ -2,6 +2,7 @@
 #include "Chaos-common.h"
 #include "Chaos0.h"
 
+//used to play delayed music on Chaos fights
 void __cdecl Chaos_gdcontrol(task* tp)
 {
     taskwk* data = tp->twp;
@@ -17,9 +18,9 @@ void __cdecl Chaos_gdcontrol(task* tp)
     }
 }
 
+//set Player and Chaos start positions
 void InitialChaosPos(taskwk* twp)
 {
-
     taskwk* p1 = playertwp[0];
     SetPlayerInitialPosition(playertwp[0]);
     CHAOS_PARAM* chaosparam_ = chaosparam;
@@ -33,6 +34,7 @@ void InitialChaosPos(taskwk* twp)
     twp->ang.y = -angle;
 }
 
+//load different chaos textures effects
 void LoadEffectTexture()
 {
     initSpriteSub(&sprite_c0_attack_a, &texlist_chaos_effect, anim_c0_attack_a);
@@ -48,9 +50,9 @@ void LoadEffectTexture()
     eff_c_lp_posadd = 0.2;
 }
 
+//init flags
 void EvChaosInit()
 {
     chaos_event_flag = 1;
     chaos_event_exit_flag = 0;
 }
-

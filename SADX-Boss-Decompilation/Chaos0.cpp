@@ -4,9 +4,6 @@
 #include "UsercallFunctionHandler.h"
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
-//auto StartBattle_Chaos0_ = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x548290, rEAX);
-
-TaskFunc(Chaos_gdcontrol_, 0x54A5F0);
 
 void StartBattle_Chaos0(task* tp)
 {
