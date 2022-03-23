@@ -41,3 +41,38 @@ DataPointer(int, dword_3C63C08, 0x3C63C08);
 
 
 DataArray(CCL_INFO, chaos0_colli_info, 0x1120320, 5);
+DataPointer(char, camera_change_flag, 0x3C63C20);
+
+FastcallFunctionPointer(void, SetChaos0LandFlags, (int flag), 0x5485E0);
+
+DataPointer(NJS_POINT3, campos_pole_ofs, 0x112041C);
+DataArray(CHAOS_OBJPVTBL, objpos_objnum_tbl, 0x1120428, 2);
+
+TaskFunc(Chaos0Display, 0x548360);
+VoidFunc(sub_546340, 0x546340);
+
+//not sure if this is correct
+DataArray(PL_JOIN_VERTEX, chaos0_jv_list, 0x3C63930, 33);
+DataArray(PL_ACTION, chaos0_action, 0x3C63AE0, 16);
+
+DataPointer(task*, ShakeChaos0_Task, 0x03C63C14);
+
+TaskFunc(ShakeChaos0Head, 0x549C00);
+VoidFunc(sub_547350, 0x547350);
+
+DataPointer(BUBBLE_DATA, chaos0_bubble, 0x0112014C);
+VoidFunc(setMaterialChaos0, 0x547D50);
+DataPointer(MORPHWK*, morph_tp, 0x03C63C10);
+
+DataPointer(char, byte_3D0DBCF, 0x3D0DBCF);
+DataPointer(char, byte_3D0DBC6, 0x3D0DBC6);
+DataPointer(char, byte_3D0DBC7, 0x3D0DBC7);
+DataPointer(char, byte_3D0DBC8, 0x3D0DBC8);
+DataPointer(char, byte_3D0DBD2, 0x3D0DBD2);
+
+FunctionPointer(void, ctrlActionChaos0, (taskwk* data, motionwk2* data2, chaoswk* chaosworker), 0x549EC0);
+
+
+DataPointer(NJS_POINT3, c00_corepos_ofs, 0x03C5A358);
+DataPointer(task*, climit_tp, 0x3C63C38);
+DataPointer(NJS_VECTOR, limpos, 0x1120448);
