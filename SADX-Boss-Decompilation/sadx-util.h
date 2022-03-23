@@ -5,6 +5,7 @@ FunctionPointer(int, GetCountKilledPlayer, (), 0x4144F0);
 
 FunctionPointer(bool, EV_CheckCancel, (), 0x42FB00);
 
+DataPointer(char, boss_life, 0x3C58150);
 DataPointer(float, boss_life_f, 0x3C58158);
 
 struct MPOSANG

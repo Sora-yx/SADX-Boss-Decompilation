@@ -22,3 +22,25 @@ void EvChaosInit()
     chaos_event_flag = 1;
     chaos_event_exit_flag = 0;
 }
+
+void SetChaosLifeGauge(signed int xpos, signed int ypos, signed int max)
+{
+    float vertical_scale;
+    taskwk* life_gauge = CreateElementalTask(2, 6, ChaosLifeGauge)->twp;
+
+    if (xpos <= 0)
+    {
+        life_gauge->pos.x = HorizontalStretch * 600.0;
+        vertical_scale = VerticalStretch * 48.0;
+    }
+    else
+    {
+        life_gauge->pos.x = xpos;
+        vertical_scale = ypos;
+    }
+
+    life_gauge->pos.y = vertical_scale;
+    life_max = max;
+    boss_life = max;
+    boss_life_f = max;
+}

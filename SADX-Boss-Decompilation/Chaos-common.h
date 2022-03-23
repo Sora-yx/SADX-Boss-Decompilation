@@ -5,6 +5,9 @@ FunctionPointer(task*, SetChaosCoreDisplay, (task* chaos_tp, float size, void* p
 FunctionPointer(void, SetChaosShakeBrain, (NJS_OBJECT* a1), 0x7AD340);
 FunctionPointer(MORPHWK*, morph_water_set, (NJS_OBJECT* a1), 0x7AEAF0);
 FunctionPointer(void, ChaosSurfacePatternChange, (chaoswk* chaos_wp), 0x7AF250);
+FunctionPointer(_camcontwk*, calcAddAngle, (int a1), 0x463F90);
+FunctionPointer(void, calcCamTargetPos, (int a3), 0x464170);
+FunctionPointer(char, calcCameraPos, (int a1), 0x464250);
 
 VoidFunc(CreateBubble, 0x7AE2C0);
 VoidFunc(ChaosUnderLightInit, 0x7AD250);
@@ -14,6 +17,8 @@ DataPointer(char, chaos_event_exit_flag, 0x3C5A7F1);
 DataPointer(char, chaos_nextmode, 0x3C5A7EC);
 DataPointer(char, chaos_reqmode, 0x3C5A7ED);
 DataPointer(char, chaos_oldmode, 0x3C5A7E1);
+DataPointer(char, ccsi_flag, 0x3C4ABB4);
+DataPointer(char, life_max, 0x3C58148);
 
 DataPointer(float, eff_scale_a, 0x03D0D734);
 DataPointer(float, eff_scale_b, 0x3D0D738);
@@ -24,8 +29,11 @@ DataPointer(char, core_disp_flag, 0x3D0DB84);
 
 DataPointer(chaoswk*, chaosbwp, 0x3C5A7E4);
 
+TaskFunc(ChaosLifeGauge, 0x4B3B40);
+
 void LoadEffectTexture();
 void EvChaosInit();
+void SetChaosLifeGauge(signed int xpos, signed int ypos, signed int max);
 
 struct BUBBLE_LIST
 {

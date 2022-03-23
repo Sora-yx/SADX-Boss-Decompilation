@@ -2,6 +2,8 @@
 #include "Chaos-common.h"
 #include "Chaos2.h"
 
+void ExecModeChaos2(task* chaos_object);
+
 void BossChaos2(task* tp)
 {
     chaoswk* chaos_worker = (chaoswk*)tp->awp;
@@ -160,6 +162,143 @@ void BossChaos2(task* tp)
     }
 }
 
+void CameraChaos2()
+{
+    taskwk* player_object = playertwp[0];
+
+    if ((player_object->pos.y < (double)c2_tgtposchg_ypos))
+    {
+        cameraControlWork.tgtxpos = chaostwp->pos.x;
+        cameraControlWork.tgtypos = chaostwp->pos.y;
+        cameraControlWork.tgtzpos = chaostwp->pos.z;
+    }
+    else
+    {
+        cameraControlWork.tgtxpos = player_object->pos.x;
+        cameraControlWork.tgtypos = player_object->pos.y;
+        cameraControlWork.tgtzpos = player_object->pos.z;
+    }
+
+    cameraControlWork.tgtxpos += chaoscam_tgtpos_ofs.x;
+    cameraControlWork.tgtypos += chaoscam_tgtpos_ofs.y;
+    cameraControlWork.tgtzpos += chaoscam_tgtpos_ofs.z;
+    calcAddAngle(0);
+    calcCamTargetPos(1);
+    calcCameraPos(0);
+
+    if ((cameraControlWork.camypos >= c2_camypos_max))
+    {
+        cameraControlWork.camypos = c2_camypos_max;
+    }
+}
+
+void ExecModeChaos2(task* chaos_object)
+{
+    motionwk* chaos_motionworker = chaos_object->mwp;
+    taskwk* chaos_entity = chaos_object->twp;
+    chaoswk* chaos_anyworker = (chaoswk*) chaos_object->awp;
+
+    switch (chaos_entity->mode)
+    {
+    case 1:
+        chaos_anyworker->etcflag |= 2u;
+        setChaos2ColliParam(chaos_entity, 0);
+        if (ccsi_flag && chaos_nextmode != 14)
+        {
+            SetChaosLifeGauge(0, 0, chaosparam->hitpoint);
+            CameraSetEventCameraFunc((CamFuncPtr)CameraChaos2, 0, 3);
+            if (chaos_entity->mode != 0xA)
+            {
+                chaos_reqmode = 0xA;
+                chaos_oldmode = chaos_entity->mode;
+            }
+            chaos_nextmode = 14;
+            WakeTimer();
+            EnableController(0);
+            EnableControl();
+            hintmes_tp = CreateElementalTask(2u, 2, c2CheckTikalMessage);
+        }
+        break;
+    case 2:
+        chaos_anyworker->etcflag &= 0xFDu;
+        //Chaos2Walk(chaos_entity, chaos_anyworker, chaos_motionworker);
+        //CheckDamageChaos2(chaos_entity);
+        break;
+    case 3:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2Damage((int)chaos_anyworker, chaos_object);
+        break;
+    case 4:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2MorphWater2Ball((int)chaos_anyworker, (int)chaos_entity);
+        break;
+    case 6:
+        chaos_anyworker->etcflag |= 2u;
+        break;
+    case 7:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2Jump((int)chaos_entity, (int)chaos_motionworker, (int)chaos_anyworker);
+        //CheckDamageChaos2(chaos_entity);
+        break;
+    case 8:
+        //Chaos2MorphO2W((int)chaos_anyworker, (int)chaos_entity);
+        break;
+    case 9:
+        //Chaos2MorphW2O((int)chaos_anyworker, (int)chaos_entity);
+        break;
+    case 0xA:
+    case 0xB:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2MorphBall((int)chaos_entity, (int)chaos_anyworker, (int)chaos_anyworker);
+        break;
+    case 0xC:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2Punch((int)chaos_entity, (int)chaos_anyworker, (int)chaos_anyworker);
+        //CheckDamageChaos2(chaos_entity);
+        break;
+    case 0xD:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2PunchS((int)chaos_anyworker, (int)chaos_entity, (int)chaos_anyworker);
+        //CheckDamageChaos2(chaos_entity);
+        break;
+    case 0xE:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2BallAttack((int)chaos_object, (int)chaos_motionworker, (int)chaos_anyworker);
+        break;
+    case 0xF:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2WaterAttack((int)chaos_anyworker, (int)chaos_object);
+        break;
+    case 0x10:
+        chaos_anyworker->etcflag |= 2u;
+        //Chaos2SplitBallAttack(chaos_object, (int)chaos_entity, (int)chaos_anyworker);
+        break;
+    case 0x11:
+        //Chaos2Guard((int)chaos_anyworker, (int)chaos_object->twp);
+        break;
+    case 0x12:
+    case 0x13:
+        setChaos2ColliParam(chaos_entity, 0);
+        break;
+    case 0x14:
+        if ((ControllerPointers[0]->PressedButtons & Buttons_A) != 0 && !GetDebugMode())
+        {
+            if (chaos_entity->mode != 2)
+            {
+                chaos_reqmode = 2;
+                chaos_oldmode = chaos_entity->mode;
+            }
+            CameraSetEventCamera(53, 0);
+            bossmtn_flag = 0;
+        }
+        break;
+    default:
+        return;
+    }
+}
+
+
+#pragma region ChaosInit
 
 task* setChaos2()
 {
@@ -216,3 +355,4 @@ void init_Chaos2()
 {
     WriteJump(Obj_Chaos2, Rd_Chaos2);
 }
+#pragma endregion
