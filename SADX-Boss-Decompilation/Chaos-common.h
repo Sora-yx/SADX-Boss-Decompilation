@@ -108,3 +108,5 @@ void InitialChaosPos(taskwk* twp);
 
 FunctionPointer(void, SetParamCameraChaosStageInit, (taskwk* a1, float a2, float a3, signed int a4), 0x4647C0);
 void __cdecl Chaos_gdcontrol(task* tp);
+
+DataPointer(char, chaos_punch_num, 0x3C5A7EE);

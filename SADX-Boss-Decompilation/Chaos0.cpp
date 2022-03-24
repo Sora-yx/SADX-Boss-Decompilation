@@ -4,6 +4,105 @@
 #include "UsercallFunctionHandler.h"
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
+auto Chaos0_CheckAttack = GenerateUsercallWrapper<signed int (*)(chaoswk* chaos, taskwk* data, taskwk* player, float a4)>(rEAX, 0x549E10, rEAX, rEDI, stack4, stack4);
+
+void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
+{
+    int mode; 
+    int nextMove;
+
+    float calcPosY; 
+    float calcPosX; 
+    float calcPosZ; 
+    float result;
+
+    float calcposY2;
+    float calcposX2;
+    float calcposZ2;
+    float result2;
+
+    int chaosHP = (int)bwp->HitPoint;
+
+    if (chaosHP != 1)
+    {
+        if (chaosHP != 2)
+        {
+            if (chaosHP == 3 && twp->mode == 2)
+            {
+                if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 80.0))
+                    chaos_punch_num = 2;
+            }
+            return;
+        }
+
+        mode = (unsigned __int8)twp->mode;
+
+        if (mode != 2)
+        {
+            if (mode == MD_CHAOS_ROLLATTACK && (unsigned __int8)twp->smode == 255)
+            {
+                calcposY2 = (twp->pos.y - playertwp[0]->pos.y);
+                calcposX2 = (twp->pos.x - playertwp[0]->pos.x);
+                calcposZ2 = (twp->pos.z - playertwp[0]->pos.z);
+                result2 = calcposZ2 * calcposZ2 + calcposX2 * calcposX2 + calcposY2 * calcposY2;
+
+                if (squareroot((result2) > 50.0))
+                {
+                    nextMove = 2;
+                    goto LABEL_20;
+                }
+                goto LABEL_18;
+            }
+
+            return;
+        }
+
+    LABEL_22:
+        if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 120.0))
+        {
+            chaos_nextmode = 11;
+            chaos_punch_num = 3;
+        }
+        return;
+    }
+
+    mode = (unsigned __int8)twp->mode;
+
+    if (mode == 2)
+        goto LABEL_22;
+
+    if (mode == 11 && (unsigned __int8)twp->smode == 255)
+    {
+        if (!(++poleact_flag & 1))
+        {
+            nextMove = 4;
+            twp->counter.b[0] = 2;
+        LABEL_20:
+            if (nextMove != twp->mode)
+            {
+                chaos_reqmode = nextMove;
+                chaos_nextmode = twp->mode;
+                chaos_oldmode = chaos_nextmode;
+            }
+            return;
+        }
+
+        calcPosY = (twp->pos.y - playertwp[0]->pos.y);
+        calcPosX = (twp->pos.x - playertwp[0]->pos.x);
+        calcPosZ = (twp->pos.z - playertwp[0]->pos.z);
+        result = calcPosZ * calcPosZ + calcPosX * calcPosX + calcPosY * calcPosY;
+
+        if (squareroot(result) > 50.0)
+        {
+            nextMove = 2;
+            goto LABEL_20;
+        }
+    LABEL_18:
+        nextMove = 4;
+        twp->counter.b[0] = 4;
+        goto LABEL_20;
+    }
+}
 
 void StartBattle_Chaos0(task* tp)
 {
@@ -448,13 +547,13 @@ void RdChaos0Init(task* tp)
     EvChaosInit();
     setChaos0();
     LoadEffectTexture();
-    //setRainEffect();
+    //setRainEffect(); //unsolved
     Chaos0_Rain_Load();
     LoadChaos0_SkyBox(); //unsolved
     data->mode = 1;
     dsPlay_iloop(1026, -1, 8, 0);
 
-    if (!GetCountKilledPlayer())
+    if (!GetCountKilledPlayer()) //used to display tikal hints
     {
         c0_message_flag[0] = 0;
         dword_3C63C04 = 0;
