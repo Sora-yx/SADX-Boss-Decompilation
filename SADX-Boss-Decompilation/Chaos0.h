@@ -75,3 +75,4 @@ DataPointer(NJS_POINT3, c00_corepos_ofs, 0x03C5A358);
 DataPointer(task*, climit_tp, 0x3C63C38);
 DataPointer(NJS_VECTOR, limpos, 0x1120448);
 DataPointer(char, poleact_flag, 0x03C63E00);
+DataPointer(int, chaos_attack_tmr, 0x03C5A7DC);

@@ -4,7 +4,54 @@
 #include "UsercallFunctionHandler.h"
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
-auto Chaos0_CheckAttack = GenerateUsercallWrapper<signed int (*)(chaoswk* chaos, taskwk* data, taskwk* player, float a4)>(rEAX, 0x549E10, rEAX, rEDI, stack4, stack4);
+
+int Chaos0_CheckAttack(chaoswk* chwp, taskwk* twp, taskwk* player, float range)
+{
+    double calcPosY;
+    double calcPosX;
+    double calcPosZ;
+    double resultPos;
+    int result;
+    int resultCopy;
+
+    resultCopy = 0;
+    ++chaos_attack_tmr;
+
+    if ((chwp->etcflag & 1) == 0)
+        return resultCopy;
+
+    calcPosY = (float)(twp->pos.y - playertwp[0]->pos.y);
+    calcPosX = (float)(twp->pos.x - playertwp[0]->pos.x);
+    calcPosZ = (float)(twp->pos.z - playertwp[0]->pos.z);
+
+    resultPos = squareroot((float)((float)((float)calcPosZ * (float)calcPosZ)
+        + (float)((float)((float)calcPosX * (float)calcPosX)
+            + (float)((float)calcPosY * (float)calcPosY))));
+
+    if (resultPos < 30.0)
+        resultCopy = 1;
+
+    if (resultPos < range && chaos_attack_tmr > 180)
+    {
+        resultCopy = 1;
+        chaos_attack_tmr = 0;
+        goto LABEL_8;
+    }
+
+    if (!resultCopy)
+        return resultCopy;
+
+LABEL_8:
+    result = resultCopy;
+    if (twp->mode != 6)
+    {
+        chaos_reqmode = 6;
+        chaos_oldmode = twp->mode;
+        chaos_nextmode = chaos_oldmode;
+    }
+
+    return result;
+}
 
 void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
 {
