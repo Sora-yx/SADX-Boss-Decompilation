@@ -8,6 +8,8 @@ FunctionPointer(void, ChaosSurfacePatternChange, (chaoswk* chaos_wp), 0x7AF250);
 FunctionPointer(_camcontwk*, calcAddAngle, (int a1), 0x463F90);
 FunctionPointer(void, calcCamTargetPos, (int a3), 0x464170);
 FunctionPointer(char, calcCameraPos, (int a1), 0x464250);
+FunctionPointer(void, moveToTargetChaos, (taskwk* twp, motionwk2* mwp, chaoswk* cwp), 0x7AE5D0);
+FunctionPointer(void, setDrop, (taskwk* twp, int num, float size, float y_offset), 0x7AD1C0);
 
 VoidFunc(CreateBubble, 0x7AE2C0);
 VoidFunc(ChaosUnderLightInit, 0x7AD250);

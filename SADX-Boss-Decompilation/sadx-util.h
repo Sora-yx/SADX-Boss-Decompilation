@@ -1,7 +1,11 @@
 #pragma once
 
+FunctionPointer(int, sadxRand, (), 0x6443BF);
+
 FunctionPointer(void, initSpriteSub, (NJS_SPRITE* a1, NJS_TEXLIST* a2, NJS_TEXANIM* a3), 0x439B20);
 FunctionPointer(int, GetCountKilledPlayer, (), 0x4144F0);
+
+
 
 FunctionPointer(bool, EV_CheckCancel, (), 0x42FB00);
 
