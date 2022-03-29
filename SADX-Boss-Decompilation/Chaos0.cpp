@@ -5,11 +5,160 @@
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
 
+int chkChaos0Collision(taskwk* twp)
+{
+    NJS_POINT3 spd;
+
+    if ((twp->flag & Status_Hurt) == 0)
+        return 0;
+
+    spd.x = -2.0;
+    spd.y = 2.0;
+    bossmtn_flag &= 0xFCu;
+    spd.z = 0.0;
+
+    if (twp->smode == 4 || twp->pos.y >= 60.0)
+    {
+        if (twp->mode != MD_CHAOS_FALL)
+        {
+            chaos_reqmode = MD_CHAOS_FALL;
+            chaos_oldmode = twp->mode;
+            chaos_nextmode = chaos_oldmode;
+        }
+    }
+    else
+    {
+        if (twp->mode != MD_CHAOS_DAMAGE)
+        {
+            chaos_reqmode = MD_CHAOS_DAMAGE;
+            chaos_oldmode = twp->mode;
+        }
+        chaos_nextmode = 16;
+    }
+    PConvertVector_P2G(playertwp[0], &spd);
+    SetVelocityP(0, spd.x, spd.y, spd.z);
+    return 1;
+}
+
+void execModeChaos0_(task* tp)
+{
+    int mode; 
+    bosswk* v8;
+    double v9; 
+    double v10; 
+
+     taskwk* data = tp->twp;
+    chaoswk* chaosWorker = (chaoswk*)tp->awp;
+    motionwk* mwp = tp->mwp;
+
+    switch (data->mode)
+    {
+    case MD_CHAOS_STND:
+        if (ccsi_flag)
+        {
+            SetChaosLifeGauge(0, 0, chaosparam->hitpoint);
+            mode = (unsigned __int8)data->mode;
+            camera_change_flag = 1;
+            if (mode != MD_CHAOS_MOVE)
+            {
+                chaos_reqmode = MD_CHAOS_MOVE;
+                chaos_oldmode = data->mode;
+            }
+            CameraSetEventCamera(50, 0);
+            chaosWorker->camera_mode = 50;
+            WakeTimer();
+            PadReadOnP(0);
+            CreateChildTask(3u, c0CheckTikalMessage, tp);
+        }
+        return;
+    case MD_CHAOS_MOVE:
+        //chaos0Walk(tp->twp, (motionwk2*)tp->mwp, (bosswk*)tp->awp);
+        chkChaos0Collision(data);
+        return;
+    case MD_CHAOS_SJUMP:
+        //chaos0Jump(tp->twp, (motionwk2*)tp->mwp, (bosswk*)tp->awp);
+        return;
+    case MD_CHAOS_PUNCH:
+        //chaos0Punch(tp->twp, (chaoswk*)tp->awp, (bosswk*)tp->awp);
+        chkChaos0Collision(data);
+        return;
+    case MD_CHAOS_DAMAGE:
+       // Chaos0Damage(tp, (chaoswk*)tp->awp);
+        return;
+    case MD_CHAOS_OBJ2W:
+        //Chaos0MorphO2W(tp->twp, (motionwk2*)tp->awp);
+        return;
+    case MD_CHAOS_W2OBJ:
+       // Chaos0MorphW2O(tp->twp, (motionwk2*)tp->awp);
+        return;
+    case MD_CHAOS_ROLLATTACK:
+       // chaos0Roll(tp->twp, (motionwk2*)tp->awp);
+        chkChaos0Collision(data);
+        return;
+    case MD_CHAOS_ONTHEPOLE:
+        //chaos0Pole(tp->twp, (motionwk2*)tp->awp);
+        return;
+    case MD_CHAOS_MOVE_W:
+        //chaos0MoveW(tp->twp, (motionwk2*)tp->mwp, (bosswk*)tp->awp);
+        return;
+    case MD_CHAOS_MOVE_WR:
+        if (data->smode)
+        {
+            if (data->smode != 1)
+                return;
+        }
+        else
+        {
+           // setChaos0ColliParam(tp->twp, 4);
+            //data->ang.y = setApartTargetPos((taskwk*)chaosWorker, v8);
+            data->smode = 1;
+        }
+        //moveToTarget(data, (motionwk2*)mwp, &chaosWorker->bwk);
+        v9 = (float)(data->pos.x - chaosWorker->tgtpos.x);
+        v10 = (float)(data->pos.z - chaosWorker->tgtpos.z);
+        if ((float)((float)((float)v10 * (float)v10) + (float)((float)v9 * (float)v9)) < 112.36)
+        {
+            if (data->mode != 9)
+            {
+                chaos_reqmode = 9;
+                chaos_oldmode = data->mode;
+            }
+            chaos_nextmode = 11;
+        }
+        return;
+    case MD_CHAOS_GUARD:
+       // chaos0Guard(tp->twp, (bosswk*)tp->awp);
+        return;
+    case MD_CHAOS_FALL:
+        //chaos0Fall(tp->twp, (motionwk2*)tp->mwp, (bosswk*)tp->awp);
+        return;
+    case MD_CHAOS_EV_WAIT:
+    case MD_CHAOS_EV_WATER:
+        //setChaos0ColliParam(tp->twp, 6);
+        return;
+    case MD_CHAOS_EDIT:
+        if ((per[0]->press & Buttons_A) != 0 && !GetDebugMode())
+        {
+            if (data->mode != MD_CHAOS_MOVE)
+            {
+                chaos_reqmode = MD_CHAOS_MOVE;
+                chaos_oldmode = data->mode;
+                chaos_nextmode = chaos_oldmode;
+            }
+            //setChaos0ColliParam(data, -1);
+            bossmtn_flag = 0;
+        }
+        return;
+    default:
+        return;
+    }
+}
+
 int Chaos0_CheckAttack(chaoswk* chwp, taskwk* twp, taskwk* player, float range)
 {
-    double calcPosY;
-    double calcPosX;
-    double calcPosZ;
+    Float calcPosY;
+    Float calcPosX;
+    Float calcPosZ;
     double resultPos;
     int result;
     int resultCopy;
@@ -20,9 +169,9 @@ int Chaos0_CheckAttack(chaoswk* chwp, taskwk* twp, taskwk* player, float range)
     if ((chwp->etcflag & 1) == 0)
         return resultCopy;
 
-    calcPosY = (float)(twp->pos.y - playertwp[0]->pos.y);
-    calcPosX = (float)(twp->pos.x - playertwp[0]->pos.x);
-    calcPosZ = (float)(twp->pos.z - playertwp[0]->pos.z);
+    calcPosY = (twp->pos.y - playertwp[0]->pos.y);
+    calcPosX = (twp->pos.x - playertwp[0]->pos.x);
+    calcPosZ = (twp->pos.z - playertwp[0]->pos.z);
 
     resultPos = squareroot((float)((float)((float)calcPosZ * (float)calcPosZ)
         + (float)((float)((float)calcPosX * (float)calcPosX)
@@ -43,9 +192,10 @@ int Chaos0_CheckAttack(chaoswk* chwp, taskwk* twp, taskwk* player, float range)
 
 LABEL_8:
     result = resultCopy;
-    if (twp->mode != 6)
+
+    if (twp->mode != MD_CHAOS_PUNCH)
     {
-        chaos_reqmode = 6;
+        chaos_reqmode = MD_CHAOS_PUNCH;
         chaos_oldmode = twp->mode;
         chaos_nextmode = chaos_oldmode;
     }
@@ -105,9 +255,9 @@ void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
         }
 
     LABEL_22:
-        if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 120.0))
+        if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 120.0)) //they pass the player ptr as an argument but it's not used.
         {
-            chaos_nextmode = 11;
+            chaos_nextmode = MD_CHAOS_ROLLATTACK;
             chaos_punch_num = 3;
         }
         return;
@@ -201,9 +351,9 @@ void BossChaos0_(task* tp)
     NJS_POINT3* camPos; 
     task* EffectChaosTask; 
     double hitPoint;
-    double calcPosY;
-    double calcPosX;
-    double calcPosZ;
+    Float calcPosY;
+    Float calcPosX;
+    Float calcPosZ;
     double posY; 
     double playerPosY; 
     double getPosY;
@@ -356,7 +506,7 @@ void BossChaos0_(task* tp)
             {
                 camMode = 50;
 
-                if ((float)(data->pos.y - playertwp[0]->pos.y) > 60.0)
+                if ((data->pos.y - playertwp[0]->pos.y) > 60.0f)
                 {
                     camMode = 51;
                 }
@@ -473,7 +623,7 @@ void DisplayRain(task* tp)
 void DisplayDrop(task* tp)
 {
     taskwk* data = tp->twp;
-    double scale = (float)(data->counter.f * (float)0.25);
+    float scale = (data->counter.f * 0.25f);
 
     argb_10.a = data->counter.f;
     ___njSetConstantMaterial(&argb_10);
@@ -493,7 +643,7 @@ void DisplayDrop(task* tp)
 
 void RainEffect(task* tp)
 {  
-    double posCheck;
+    Float posCheck;
     double scalePos;
     double sclY;
     double rng2;
@@ -538,7 +688,7 @@ void RainEffect(task* tp)
         }
         else
         {
-            if ((float)(chaostwp->pos.y - playertwp[0]->pos.y) > 60.0)
+            if ((chaostwp->pos.y - playertwp[0]->pos.y) > 60.0f)
             {
                 DestroyTask(tp);
                 return;
