@@ -747,7 +747,7 @@ void RdChaos0Init(task* tp)
     //setRainEffect(); //unsolved
     Chaos0_Rain_Load();
     LoadChaos0_SkyBox(); //unsolved
-    data->mode = 1;
+    data->mode = MD_RDCHAOS0_WAIT;
     dsPlay_iloop(1026, -1, 8, 0);
 
     if (!GetCountKilledPlayer()) //used to display tikal hints
@@ -766,7 +766,7 @@ void Rd_Chaos0(task* tp)
 
     if (data->mode)
     {
-        if (data->mode == 2)
+        if (data->mode == MD_RDCHAOS0_END)
         {
             ADX_Close();
             ___njFogDisable();
