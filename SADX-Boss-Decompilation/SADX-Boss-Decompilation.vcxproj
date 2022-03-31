@@ -167,6 +167,9 @@
     <ClInclude Include="Chaos-common.h" />
     <ClInclude Include="Chaos0.h" />
     <ClInclude Include="Chaos2.h" />
+    <ClInclude Include="Chaos4.h" />
+    <ClInclude Include="Chaos6.h" />
+    <ClInclude Include="Chaos7.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
