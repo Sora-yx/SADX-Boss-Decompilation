@@ -85,3 +85,7 @@ enum modeRDChaos0
 	MD_RDCHAOS0_END = 0x2,
 	MD_RDCHAOS0_MAIN = 0x3,
 };
+
+DataPointer(int, sound_cnt, 0x3C63CE8);
+DataPointer(float, g_ypos2, 0x3C63CE4);
+DataPointer(motionwk*, shakehead_mwp, 0x3C63D84);

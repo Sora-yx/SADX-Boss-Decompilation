@@ -112,3 +112,4 @@ FunctionPointer(void, SetParamCameraChaosStageInit, (taskwk* a1, float a2, float
 void __cdecl Chaos_gdcontrol(task* tp);
 
 DataPointer(char, chaos_punch_num, 0x3C5A7EE);
+void __cdecl turnToPlayer(taskwk* twp, chaoswk* bwp);

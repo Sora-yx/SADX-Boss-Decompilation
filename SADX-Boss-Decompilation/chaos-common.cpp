@@ -78,3 +78,17 @@ void SetChaosLifeGauge(signed int xpos, signed int ypos, signed int max)
     boss_life = max;
     boss_life_f = max;
 }
+
+void __cdecl turnToPlayer(taskwk* twp, chaoswk* bwp)
+{
+    double angle; // fp1
+
+    if (playertwp[0])
+    {
+        angle = atan2((float)(playertwp[0]->pos.z - twp->pos.z), (float)(playertwp[0]->pos.x - twp->pos.x));
+        twp->ang.y = AdjustAngle(
+            twp->ang.y,
+            (int)(angle * 65536.0 * 0.1591549762031479) - bwp->attack_yang,
+            chaosparam->turn_spd);
+    }
+}

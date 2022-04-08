@@ -4,6 +4,7 @@
 #include "UsercallFunctionHandler.h"
 
 auto execModeChaos0 = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x547FB0, rEAX);
+FunctionPointer(void, setChaos0ColliParam, (taskwk* twp, int mode), 0x54A420);
 
 int chkChaos0Collision(taskwk* twp)
 {
@@ -12,10 +13,10 @@ int chkChaos0Collision(taskwk* twp)
     if ((twp->flag & Status_Hurt) == 0)
         return 0;
 
-    spd.x = -2.0;
-    spd.y = 2.0;
+    spd.x = -2.0f;
+    spd.y = 2.0f;
     bossmtn_flag &= 0xFCu;
-    spd.z = 0.0;
+    spd.z = 0.0f;
 
     if (twp->smode == 4 || twp->pos.y >= 60.0f)
     {
@@ -38,6 +39,153 @@ int chkChaos0Collision(taskwk* twp)
     PConvertVector_P2G(playertwp[0], &spd);
     SetVelocityP(0, spd.x, spd.y, spd.z);
     return 1;
+}
+
+void __fastcall setShakeHeadParam(double param)
+{
+    motionwk* shakeHeadMWP; // r11
+    double result; // fp12
+
+    shakeHeadMWP = shakehead_mwp;
+    result = (float)((float)param + shakehead_mwp->spd.z);
+    shakehead_mwp->spd.z = (float)param + shakehead_mwp->spd.z;
+    if (result >= 2.0)
+        shakeHeadMWP->spd.z = (float)2.0f * (float)0.60000002;
+    else
+        shakeHeadMWP->spd.z = (float)result * (float)0.60000002;
+}
+
+void chaos0Walk(taskwk* data, motionwk2* mwp, chaoswk* boss)
+{
+    double v3; // st7
+    Angle v4; // ecx
+    double shadowPos; // st7
+    double v6; // st7
+    float v7; // st7
+    float v8; // st7
+    double GetShadow; // st7
+    double g_ypos2Copy; // st7
+    float a2a; // [esp+0h] [ebp-2Ch]
+    float a2b; // [esp+0h] [ebp-2Ch]
+    float shadowPosCopy; // [esp+14h] [ebp-18h]
+    float a3a; // [esp+18h] [ebp-14h]
+    float a1a; // [esp+1Ch] [ebp-10h]
+    Angle3 a4; // [esp+20h] [ebp-Ch] BYREF
+
+    switch (data->smode)
+    {
+    case 0:
+        setChaos0ColliParam(data, 0);
+        chaos_attack_tmr = 0;
+        boss->bwk.req_action = MD_CHAOS_MOVE;
+        sound_cnt = 0;
+        data->smode = 1;
+        break;
+    case 1:
+
+        bossmtn_flag = 0;
+        if (boss->bwk.action == MD_CHAOS_MOVE)
+        {
+            data->smode = 2;
+        }
+        break;
+    case 2:
+    case 3:
+    case 4:
+        v3 = njCos(data->ang.y);
+        v4 = data->ang.y;
+        data->pos.x = v3 * 0.60000002f + data->pos.x;
+        data->pos.z = njSin(v4) * 0.60000002f + data->pos.z;
+        walk_dist = walk_dist + 0.60000002f;
+        if (!LOBYTE(boss->generaltimer))
+        {
+            setDrop(data, 8, 0.5f, 1.0f);
+            setShakeHeadParam(0.69999999f);
+        }
+        break;
+    default:
+        break;
+    }
+    a2a = data->pos.y + 4.0f;
+    shadowPos = GetShadowPos(data->pos.x, a2a, data->pos.z, &a4);
+    shadowPosCopy = shadowPos;
+
+    if (shadowPos <= 0.0f)
+    {
+        shadowPosCopy = 0.0f;
+    }
+    switch (data->smode)
+    {
+    case 2:
+        boss->etcflag |= 1u;
+        turnToPlayer(data, boss);
+        if (data->pos.y - 1.0f <= shadowPosCopy)
+        {
+            a1a = njCos(data->ang.y) * 5.0f + data->pos.x;
+            a3a = njSin(data->ang.y) * 5.0f + data->pos.z;
+            a2b = data->pos.y + 4.0f;
+            GetShadow = GetShadowPos(a1a, a2b, a3a, &a4);
+            g_ypos2 = GetShadow;
+
+            if (GetShadow <= 0.0f)
+            {
+                g_ypos2 = 0.0f;
+            }
+
+            if (data->pos.y + 1.0 >= g_ypos2)
+            {
+                data->pos.y = shadowPosCopy;
+            }
+            else
+            {
+                g_ypos2Copy = g_ypos2;
+                data->wtimer = 6;
+                mwp->spd.y = (g_ypos2Copy - data->pos.y) * 0.16666667f;
+                data->smode= 4;
+                boss->etcflag &= 0xFFFEu;
+            }
+        }
+        else
+        {
+            data->smode = 3;
+            mwp->spd.y = 0.0f;
+            boss->etcflag &= 0xFFFEu;
+        }
+        break;
+    case 3:
+        v7 = mwp->spd.y - 0.1f;
+        mwp->spd.y = v7;
+        v8 = v7 + data->pos.y;
+        data->pos.y = v8;
+
+        if (v8 <= shadowPosCopy)
+        {
+            data->pos.y = shadowPosCopy;
+            data->smode = 2;
+            setDrop(data, 8, 1.0, 0.0);
+            setShakeHeadParam(1.5);
+        }
+
+        break;
+    case 4:
+        v6 = mwp->spd.y;
+        --data->wtimer;
+        data->pos.y = v6 + data->pos.y;
+
+        if (data->pos.y >= (double)g_ypos2)
+        {
+            data->pos.y = g_ypos2;
+            data->smode = 2;
+        }
+
+        break;
+    }
+
+    if ((unsigned __int8)data->smode != 255 && ++sound_cnt > 30)
+    {
+        sound_cnt = 0;
+        dsPlay_oneshot_Dolby(756, 0, 0, 0, 120, data);
+    }
 }
 
 void execModeChaos0_(task* tp)
@@ -74,7 +222,7 @@ void execModeChaos0_(task* tp)
         }
         return;
     case MD_CHAOS_MOVE:
-        //chaos0Walk(tp->twp, (motionwk2*)tp->mwp, (bosswk*)tp->awp);
+        chaos0Walk(tp->twp, (motionwk2*)tp->mwp, (chaoswk*)tp->awp);
         chkChaos0Collision(data);
         return;
     case MD_CHAOS_SJUMP:
@@ -111,7 +259,7 @@ void execModeChaos0_(task* tp)
         }
         else
         {
-           // setChaos0ColliParam(tp->twp, 4);
+            setChaos0ColliParam(tp->twp, 4);
             //data->ang.y = setApartTargetPos((taskwk*)chaosWorker, v8);
             data->smode = 1;
         }
@@ -136,7 +284,7 @@ void execModeChaos0_(task* tp)
         return;
     case MD_CHAOS_EV_WAIT:
     case MD_CHAOS_EV_WATER:
-        //setChaos0ColliParam(tp->twp, 6);
+        setChaos0ColliParam(tp->twp, 6);
         return;
     case MD_CHAOS_EDIT:
         if ((per[0]->press & Buttons_A) != 0 && !GetDebugMode())
@@ -147,7 +295,7 @@ void execModeChaos0_(task* tp)
                 chaos_oldmode = data->mode;
                 chaos_nextmode = chaos_oldmode;
             }
-            //setChaos0ColliParam(data, -1);
+            setChaos0ColliParam(data, -1);
             bossmtn_flag = 0;
         }
         return;
@@ -245,7 +393,7 @@ void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
                 calcposZ2 = (twp->pos.z - playertwp[0]->pos.z);
                 result2 = calcposZ2 * calcposZ2 + calcposX2 * calcposX2 + calcposY2 * calcposY2;
 
-                if (squareroot((result2) > 50.0))
+                if (squareroot((result2) > 50.0f))
                 {
                     nextMove = 2;
                     goto LABEL_20;
@@ -257,7 +405,7 @@ void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
         }
 
     LABEL_22:
-        if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 120.0)) //they pass the player ptr as an argument but it's not used.
+        if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 120.0f)) //they pass the player ptr as an argument but it's not used.
         {
             chaos_nextmode = MD_CHAOS_ROLLATTACK;
             chaos_punch_num = 3;
@@ -291,7 +439,7 @@ void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
         calcPosZ = (twp->pos.z - playertwp[0]->pos.z);
         result = calcPosZ * calcPosZ + calcPosX * calcPosX + calcPosY * calcPosY;
 
-        if (squareroot(result) > 50.0)
+        if (squareroot(result) > 50.0f)
         {
             nextMove = 2;
             goto LABEL_20;
