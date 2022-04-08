@@ -77,3 +77,11 @@ DataPointer(NJS_VECTOR, limpos, 0x1120448);
 DataPointer(char, poleact_flag, 0x03C63E00);
 DataPointer(int, chaos_attack_tmr, 0x03C5A7DC);
 TaskFunc(c0CheckTikalMessage, 0x545EA0);
+
+enum modeRDChaos0
+{
+	MD_RDCHAOS0_INIT = 0x0,
+	MD_RDCHAOS0_WAIT = 0x1,
+	MD_RDCHAOS0_END = 0x2,
+	MD_RDCHAOS0_MAIN = 0x3,
+};
