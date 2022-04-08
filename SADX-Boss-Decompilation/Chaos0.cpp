@@ -17,7 +17,7 @@ int chkChaos0Collision(taskwk* twp)
     bossmtn_flag &= 0xFCu;
     spd.z = 0.0;
 
-    if (twp->smode == 4 || twp->pos.y >= 60.0)
+    if (twp->smode == 4 || twp->pos.y >= 60.0f)
     {
         if (twp->mode != MD_CHAOS_FALL)
         {
@@ -33,7 +33,7 @@ int chkChaos0Collision(taskwk* twp)
             chaos_reqmode = MD_CHAOS_DAMAGE;
             chaos_oldmode = twp->mode;
         }
-        chaos_nextmode = 16;
+        chaos_nextmode = MD_CHAOS_MOVE_WR;
     }
     PConvertVector_P2G(playertwp[0], &spd);
     SetVelocityP(0, spd.x, spd.y, spd.z);
@@ -44,10 +44,10 @@ void execModeChaos0_(task* tp)
 {
     int mode; 
     bosswk* v8;
-    double v9; 
-    double v10; 
+    float v9; 
+    float v10; 
 
-     taskwk* data = tp->twp;
+    taskwk* data = tp->twp;
     chaoswk* chaosWorker = (chaoswk*)tp->awp;
     motionwk* mwp = tp->mwp;
 
@@ -59,11 +59,13 @@ void execModeChaos0_(task* tp)
             SetChaosLifeGauge(0, 0, chaosparam->hitpoint);
             mode = (unsigned __int8)data->mode;
             camera_change_flag = 1;
+
             if (mode != MD_CHAOS_MOVE)
             {
                 chaos_reqmode = MD_CHAOS_MOVE;
                 chaos_oldmode = data->mode;
             }
+
             CameraSetEventCamera(50, 0);
             chaosWorker->camera_mode = 50;
             WakeTimer();
@@ -116,14 +118,14 @@ void execModeChaos0_(task* tp)
         //moveToTarget(data, (motionwk2*)mwp, &chaosWorker->bwk);
         v9 = (float)(data->pos.x - chaosWorker->tgtpos.x);
         v10 = (float)(data->pos.z - chaosWorker->tgtpos.z);
-        if ((float)((float)((float)v10 * (float)v10) + (float)((float)v9 * (float)v9)) < 112.36)
+        if ((float)((float)((float)v10 * (float)v10) + (float)((float)v9 * (float)v9)) < 112.36f)
         {
-            if (data->mode != 9)
+            if (data->mode != MD_CHAOS_W2OBJ)
             {
-                chaos_reqmode = 9;
+                chaos_reqmode = MD_CHAOS_W2OBJ;
                 chaos_oldmode = data->mode;
             }
-            chaos_nextmode = 11;
+            chaos_nextmode = MD_CHAOS_ROLLATTACK;
         }
         return;
     case MD_CHAOS_GUARD:
@@ -226,7 +228,7 @@ void ctrlActionChaos0(taskwk* twp, motionwk2* mwp, chaoswk* bwp)
         {
             if (chaosHP == 3 && twp->mode == 2)
             {
-                if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 80.0))
+                if (Chaos0_CheckAttack(bwp, twp, playertwp[0], 80.0f))
                     chaos_punch_num = 2;
             }
             return;
@@ -437,7 +439,7 @@ void BossChaos0_(task* tp)
         }
 
         chaos_event_flag = 1;
-        SetChaosCoreDisplay(tp, 1.0, &c00_corepos_ofs, (void*)0x1120454); //display the red effect on Chaos head
+        SetChaosCoreDisplay(tp, 1.0f, &c00_corepos_ofs, (void*)0x1120454); //display the red effect on Chaos head
         core_disp_flag = 1;
     }
 
@@ -543,27 +545,27 @@ void BossChaos0_(task* tp)
         ChaosSurfacePatternChange(chaosworker);
         Chaos0Display(tp);
 
-        if ((chaoswk2->etcflag & 1) != 0 && walk_dist > 5.0)
+        if ((chaoswk2->etcflag & 1) != 0 && walk_dist > 5.0f)
         {
             EffectChaosTask = CreateElementalTask(2u, 5, dispEffectChaosTracks);
 
             if (EffectChaosTask)
             {
                 EffectChaosTask->twp->counter.f = 0.80000001;
-                walk_dist = 0.0;
+                walk_dist = 0.0f;
             }
         }
 
         if ((chaoswk2->dispflag & 1) != 0)
             chaoswk2->ground_y = Shadow(data, 0.80000001);
 
-        if (data->pos.y >= 0.0)
+        if (data->pos.y >= 0.0f)
         {
             getPosY = data->pos.y;
         }
         else
         {
-            getPosY = 0.0;
+            getPosY = 0.0f;
         }
 
         data->pos.y = getPosY;
@@ -644,7 +646,7 @@ void DisplayDrop(task* tp)
 void RainEffect(task* tp)
 {  
     Float posCheck;
-    double scalePos;
+    float scalePos;
     double sclY;
     double rng2;
     int rngCamRotY;
@@ -655,8 +657,8 @@ void RainEffect(task* tp)
     double posZ;
     double posX; 
     int v15;
-    double shadowPos;
-    double sclValue; 
+    float shadowPos;
+    float sclValue; 
 
     taskwk* data = tp->twp;
     unsigned int  mode = (unsigned __int8)data->mode;
@@ -678,7 +680,7 @@ void RainEffect(task* tp)
             DestroyTask(tp);
             return;
         }
-        scalePos = (float)(data->scl.x + data->pos.y);
+        scalePos = (data->scl.x + data->pos.y);
         sclY = data->scl.y;
         data->pos.y = data->scl.x + data->pos.y;
 
@@ -694,7 +696,7 @@ void RainEffect(task* tp)
                 return;
             }
             data->pos.y = sclY;
-            data->counter.f = 1.0;
+            data->counter.f = 1.0f;
             tp->disp = DisplayDrop;
             data->mode = 2;
         }
@@ -708,17 +710,17 @@ void RainEffect(task* tp)
         sinRes = njSin(rngCamRotY);
         data->pos.x = camera_twp->pos.x + (float)cosRes;
         camPosZ = (float)(camera_twp->pos.z + (float)((float)sinRes * (float)rng2));
-        data->pos.y = 120.0;
+        data->pos.y = 120.0f;
         data->pos.z = camPosZ;
         rng = rand();
         posZ = data->pos.z;
         posX = data->pos.x;
         data->scl.x = -rng * (float)0.000030517578 * rain_param.spd_ofs + rain_param.spd_base;
-        shadowPos = GetShadowPos(posX, 5.0, posZ, &data->ang) + 0.1;
-        sclValue = 0.1;
-        data->scl.y = (float)shadowPos + (float)0.1;
-        if ((float)((float)shadowPos + (float)0.1) > 0.1)
-            sclValue = (float)((float)shadowPos + (float)0.1);
+        shadowPos = GetShadowPos(posX, 5.0f, posZ, &data->ang) + 0.1f;
+        sclValue = 0.1f;
+        data->scl.y = shadowPos + 0.1f;
+        if ((shadowPos + 0.1f) > 0.1f)
+            sclValue = (float)((float)shadowPos + 0.1f);
         data->scl.y = sclValue;
 
         tp->disp = DisplayRain;
